@@ -1,0 +1,508 @@
+program -> PROGRAM
+identifier -> IDENT(primes)
+semicolon -> SEMICOLON
+identifier -> IDENT(n)
+more_idents -> EMPTY
+colon -> COLON
+integer -> INTEGER
+declaration -> identifier more_idents colon integer
+semicolon -> SEMICOLON
+identifier -> IDENT(a)
+more_idents -> EMPTY
+colon -> COLON
+array -> ARRAY
+l_paren -> L_PAREN
+number -> NUMBER(1000)
+r_paren -> R_PAREN
+of -> OF
+integer -> INTEGER
+declaration -> identifier more_idents colon array l_paren number r_paren of integer
+semicolon -> SEMICOLON
+identifier -> IDENT(i)
+identifier -> IDENT(j)
+more_idents -> EMPTY
+more_idents -> COMMA identifier more_idents
+colon -> COLON
+integer -> INTEGER
+declaration -> identifier more_idents colon integer
+semicolon -> SEMICOLON
+identifier -> IDENT(x)
+identifier -> IDENT(sqrt_n)
+more_idents -> EMPTY
+more_idents -> COMMA identifier more_idents
+colon -> COLON
+integer -> INTEGER
+declaration -> identifier more_idents colon integer
+semicolon -> SEMICOLON
+declarations -> EMPTY
+declarations -> declaration semicolon declarations
+declarations -> declaration semicolon declarations
+declarations -> declaration semicolon declarations
+declarations -> declaration semicolon declarations
+begin_program -> BEGINPROGRAM
+read -> READ
+identifier -> IDENT(n)
+Var -> identifer
+Vars -> Var
+statement -> read Vars
+semicolon -> SEMICOLON
+statements -> statement semicolon
+identifier -> IDENT(x)
+Var -> identifer
+assign -> ASSIGN
+identifier -> IDENT(n)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+while -> WHILE
+identifier -> IDENT(x)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+comp -> GT
+identifier -> IDENT(n)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+false -> DIV
+identifier -> IDENT(x)
+Var -> identifer
+term -> Var
+terms -> terms divide term
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+relational_exp -> expression comp expression
+andlist -> EMPTY
+relation_and_exp -> relation_exp andlist
+relatoinexplist -> EMPTY
+bool_exp -> relation_and_exp relationexplist
+begin_loop -> BEGINLOOP
+identifier -> IDENT(x)
+Var -> identifer
+assign -> ASSIGN
+l_paren -> L_PAREN
+identifier -> IDENT(x)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+false -> ADD
+identifier -> IDENT(n)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+false -> DIV
+identifier -> IDENT(x)
+Var -> identifer
+term -> Var
+terms -> terms divide term
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+exprlist -> add multiplicative_exp exprlist
+expression -> multiplicative_exp exprlist
+r_paren -> R_PAREN
+term -> l_paren expression r_paren
+terms -> EMPTY
+false -> DIV
+number -> NUMBER(2)
+term -> number
+terms -> terms divide term
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+ststatement -> EMPTY
+ststatement -> statement semicolon ststatement
+end_loop -> ENDLOOP
+statement -> while bool_exp begin_loop ststatement end_loop
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+identifier -> IDENT(sqrt_n)
+Var -> identifer
+assign -> ASSIGN
+identifier -> IDENT(x)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+identifier -> IDENT(i)
+Var -> identifer
+assign -> ASSIGN
+number -> NUMBER(2)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+while -> WHILE
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+comp -> LTE
+identifier -> IDENT(n)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+relational_exp -> expression comp expression
+andlist -> EMPTY
+relation_and_exp -> relation_exp andlist
+relatoinexplist -> EMPTY
+bool_exp -> relation_and_exp relationexplist
+begin_loop -> BEGINLOOP
+identifier -> IDENT(a)
+l_paren -> L_PAREN
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+r_paren -> R_PAREN
+Var -> identifier l_paren expression r_paren
+assign -> ASSIGN
+number -> NUMBER(0)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+identifier -> IDENT(i)
+Var -> identifer
+assign -> ASSIGN
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+false -> ADD
+number -> NUMBER(1)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+exprlist -> add multiplicative_exp exprlist
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+ststatement -> EMPTY
+ststatement -> statement semicolon ststatement
+ststatement -> statement semicolon ststatement
+end_loop -> ENDLOOP
+statement -> while bool_exp begin_loop ststatement end_loop
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+identifier -> IDENT(i)
+Var -> identifer
+assign -> ASSIGN
+number -> NUMBER(2)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+while -> WHILE
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+comp -> LTE
+identifier -> IDENT(sqrt_n)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+relational_exp -> expression comp expression
+andlist -> EMPTY
+relation_and_exp -> relation_exp andlist
+relatoinexplist -> EMPTY
+bool_exp -> relation_and_exp relationexplist
+begin_loop -> BEGINLOOP
+if -> IF
+identifier -> IDENT(a)
+l_paren -> L_PAREN
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+r_paren -> R_PAREN
+Var -> identifier l_paren expression r_paren
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+comp -> EQ
+number -> NUMBER(0)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+relational_exp -> expression comp expression
+andlist -> EMPTY
+relation_and_exp -> relation_exp andlist
+relatoinexplist -> EMPTY
+bool_exp -> relation_and_exp relationexplist
+then -> THEN
+identifier -> IDENT(j)
+Var -> identifer
+assign -> ASSIGN
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+false -> ADD
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+exprlist -> add multiplicative_exp exprlist
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+while -> WHILE
+identifier -> IDENT(j)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+comp -> LTE
+identifier -> IDENT(n)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+relational_exp -> expression comp expression
+andlist -> EMPTY
+relation_and_exp -> relation_exp andlist
+relatoinexplist -> EMPTY
+bool_exp -> relation_and_exp relationexplist
+begin_loop -> BEGINLOOP
+identifier -> IDENT(a)
+l_paren -> L_PAREN
+identifier -> IDENT(j)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+r_paren -> R_PAREN
+Var -> identifier l_paren expression r_paren
+assign -> ASSIGN
+number -> NUMBER(1)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+identifier -> IDENT(j)
+Var -> identifer
+assign -> ASSIGN
+identifier -> IDENT(j)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+false -> ADD
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+exprlist -> add multiplicative_exp exprlist
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+ststatement -> EMPTY
+ststatement -> statement semicolon ststatement
+ststatement -> statement semicolon ststatement
+end_loop -> ENDLOOP
+statement -> while bool_exp begin_loop ststatement end_loop
+semicolon -> SEMICOLON
+ststatement -> EMPTY
+ststatement -> statement semicolon ststatement
+ststatement -> statement semicolon ststatement
+optionalelse -> EMPTY
+end_if -> ENDIF
+statement -> if bool_exp then ststatement optionalelse end_if
+semicolon -> SEMICOLON
+identifier -> IDENT(i)
+Var -> identifer
+assign -> ASSIGN
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+false -> ADD
+number -> NUMBER(1)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+exprlist -> add multiplicative_exp exprlist
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+ststatement -> EMPTY
+ststatement -> statement semicolon ststatement
+ststatement -> statement semicolon ststatement
+end_loop -> ENDLOOP
+statement -> while bool_exp begin_loop ststatement end_loop
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+identifier -> IDENT(i)
+Var -> identifer
+assign -> ASSIGN
+number -> NUMBER(2)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+while -> WHILE
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+comp -> LTE
+identifier -> IDENT(n)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+relational_exp -> expression comp expression
+andlist -> EMPTY
+relation_and_exp -> relation_exp andlist
+relatoinexplist -> EMPTY
+bool_exp -> relation_and_exp relationexplist
+begin_loop -> BEGINLOOP
+if -> IF
+identifier -> IDENT(a)
+l_paren -> L_PAREN
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+r_paren -> R_PAREN
+Var -> identifier l_paren expression r_paren
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+comp -> EQ
+number -> NUMBER(0)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+expression -> multiplicative_exp exprlist
+relational_exp -> expression comp expression
+andlist -> EMPTY
+relation_and_exp -> relation_exp andlist
+relatoinexplist -> EMPTY
+bool_exp -> relation_and_exp relationexplist
+then -> THEN
+write -> WRITE
+identifier -> IDENT(i)
+Var -> identifer
+Vars -> Var
+statement -> write Vars
+semicolon -> SEMICOLON
+ststatement -> EMPTY
+ststatement -> statement semicolon ststatement
+optionalelse -> EMPTY
+end_if -> ENDIF
+statement -> if bool_exp then ststatement optionalelse end_if
+semicolon -> SEMICOLON
+identifier -> IDENT(i)
+Var -> identifer
+assign -> ASSIGN
+identifier -> IDENT(i)
+Var -> identifer
+term -> Var
+terms -> EMPTY
+multiplicative_exp -> term terms
+false -> ADD
+number -> NUMBER(1)
+term -> number
+terms -> EMPTY
+multiplicative_exp -> term terms
+exprlist -> EMPTY
+exprlist -> add multiplicative_exp exprlist
+expression -> multiplicative_exp exprlist
+statement -> Var assign expression
+semicolon -> SEMICOLON
+ststatement -> EMPTY
+ststatement -> statement semicolon ststatement
+ststatement -> statement semicolon ststatement
+end_loop -> ENDLOOP
+statement -> while bool_exp begin_loop ststatement end_loop
+semicolon -> SEMICOLON
+statements -> statements statements semicolon
+block -> declarations begin_program statements
+end_program -> ENDPROGRAM
+program -> program ident semicolon block end_program
