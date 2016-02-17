@@ -1,0 +1,39 @@
+## Title: euclideanAlgorithm.min
+## Author: Frank Madrid
+## Purpose: CS152 - Compiler Design Phase 1 Test Case (MODERATE)
+##
+## Performs the Euclidean Algorithm to calculate the GCD of two integers 'a' 
+## and 'b' with peculiar names for identifiers for the purposes of checking
+## lexical analyzer implementation.
+## Lexical Analysis Error Expected: 
+## 	Error at line 33, column 10: unrecognized symbol "="
+
+program euclideanAlgorithm
+
+num1            : integer;	## 'a'
+num2            : integer;	## 'b'
+q_U0713_N5      : integer; 	## Quotient
+r3M_AinD_34     : integer; 	## Remainder
+
+beginprogram			## main program
+
+	read num1;		## Read num1 from stdin
+	read num2;		## Read num2 from stdin
+
+	while true beginloop
+
+		q_U0713_N5  := num1 / num2;
+		r3M_AinD_34 := num1 - num2 * q_U0713_N5;
+		
+		if r3M_AinD_34 == 0
+			endloop;
+		endif;
+		
+		num1 := num2;
+  		num2 = r3M_AinD_34; ## Lexical Error
+
+	endloop;
+
+	write num2;
+
+endprogram

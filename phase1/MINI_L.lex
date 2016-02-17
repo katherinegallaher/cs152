@@ -7,7 +7,7 @@
 
 Digit      [0-9]
 Alpha 	   [a-zA-Z]
-Identifier {Alpha}+{Digit}*(_+({Alpha}|{Digit})+)*({Alpha}|{Digit})* 
+Identifier {Alpha}+(_*({Alpha}|{Digit})+)* 
    
 %%
 "program"       {printf("PROGRAM\n"); currPos += yyleng;}
@@ -60,17 +60,19 @@ Identifier {Alpha}+{Digit}*(_+({Alpha}|{Digit})+)*({Alpha}|{Digit})*
 
 
 [ \t]+         {/* ignore spaces */ currPos += yyleng;}
-"##".*		   {/* for comments */ currLine++; currPos = 1;}
+"##".*		   {/* for comments */ currPos = 1;}
 "\n"           {currLine++; currPos = 1;}
 
 (({Digit}*|_*)+|({Digit}_+)){Identifier}?    {printf("Error at line %d, column %d: identifier \"%s\" must begin with a letter\n", currLine, currPos, yytext); exit(0);}
-{Identifier}_+              	   			 {printf("Error at line %d, column %d: identifier \"%s\" cannot end with an underscore\n", currLine, currPos, yytext); exit(0);}
 .              								 {printf("Error at line %d, column %d: unrecognized symbol \"%s\"\n", currLine, currPos, yytext); exit(0);}
+
+{Identifier}_+              	   			 {printf("Error at line %d, column %d: identifier \"%s\" cannot end with an underscore\n", currLine, currPos, yytext); exit(0);}
 
 %%
 
 int main(int argc, char ** argv)
 {
+
    if(argc >= 2)
    {
       yyin = fopen(argv[1], "r");

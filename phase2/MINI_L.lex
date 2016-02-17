@@ -6,13 +6,11 @@
    #include <stdio.h>
    #include <stdlib.h>
    int currLine = 1, currPos = 1;
-   //extern char* identToken;
-   //extern int numberToken;
 %}
 
 Digit      [0-9]
 Alpha 	   [a-zA-Z]
-Identifier {Alpha}+{Digit}*(_+({Alpha}|{Digit})+)*({Alpha}|{Digit})* 
+Identifier {Alpha}+(_*({Alpha}|{Digit})+)* 
    
 %%
 "program"       {currPos += yyleng; return PROGRAM;}
@@ -65,7 +63,7 @@ Identifier {Alpha}+{Digit}*(_+({Alpha}|{Digit})+)*({Alpha}|{Digit})*
 
 
 [ \t]+         {/* ignore spaces */ currPos += yyleng;}
-"##".*		   {/* for comments */ currLine++; currPos = 1;}
+"##".*		   {/* for comments */ currPos = 1;}
 "\n"           {currLine++; currPos = 1;}
 
 (({Digit}*|_*)+|({Digit}_+)){Identifier}?    {printf("Error at line %d, column %d: identifier \"%s\" must begin with a letter\n", currLine, currPos, yytext); exit(0);}
