@@ -1,0 +1,32 @@
+program test;
+
+n, i : integer; 
+a : array(1000) of integer; 
+t : array(1000) of integer; 
+x, y,j,k : integer; 
+
+beginprogram 
+
+if i<j or j<n or i>=0 then 
+	t(i) := i *2; 
+endif;
+
+##	read n, x;
+##	read a(20); 
+##	write a(n-1);
+##	x := n;
+##	n := (x-5*n) + (x * 3);
+##	a(n) := 0;
+##	n := a(2);
+
+
+##	while i<=n beginloop 
+##		a(i) :=0;
+##		i := i + 1;
+##	endloop; 
+
+##if a(i) == 0 then
+##	write i;
+##endif; 
+
+endprogram 
