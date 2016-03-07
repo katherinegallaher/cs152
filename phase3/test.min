@@ -6,10 +6,55 @@ t : array(1000) of integer;
 x, y,j,k : integer; 
 
 beginprogram 
+do beginloop
+	t(k) :=k;
+    k := k + 1;
+	if k %2 == 0 then
+		read n;
+		read i;
+		continue; 
+	endif;
+	write t(k-1);
+endloop
+while k<n;
 
-if i<j or j<n or i>=0 then 
-	t(i) := i *2; 
-endif;
+
+
+
+##i:=2;
+##while i<=n beginloop
+##	if a(i) == 0 then
+##		write i;
+##	endif;
+##	i := i+1;
+##endloop;
+
+##if i<j and j<n and i>=0 then
+##	t(i) := i*2;
+##	k := t(i);
+##else
+##	while i>=j or false
+##		beginloop
+##		i := i-1;
+##	endloop;
+##endif;
+
+##while x>n/x beginloop
+##	x :=3;
+##	continue;
+##	n := x+3;
+##	n:=10;
+##endloop;
+
+##if i<j and j<n and i>=0 then 
+##	t(i) := i*2;
+##	t(j) :=  j*2;
+##	k := t(i);
+##	t(i) := t(j);
+##	t(j) := k;
+##else
+##	k := (1+i-j)%3;
+##endif;
 
 ##	read n, x;
 ##	read a(20); 

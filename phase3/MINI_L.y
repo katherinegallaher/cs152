@@ -30,10 +30,13 @@
  };
 
  string filename;
+ int l_size=0;
+
  bool add = false, sub = false; 
  bool mult = false, divide = false, mod = false; 
  bool readst = false, writest = false; 
  bool andp = false, orp = false; 
+ ostringstream final;
  ostringstream out;
  ostringstream errors;
 
@@ -41,8 +44,10 @@
  vector<string> t_vars;
  vector<string> p_vars;
  vector<string> l_labels; 
+ vector<string> doloop_l;
+ string doloop_c; 
 
- vector <string> t;
+ vector<string > t;
 %}
 
 %union{
@@ -185,19 +190,63 @@ statement:
 			}
 			| IF bool_exp THEN ststatement{
 											stringstream temp;
-											temp << "L" << l_labels.size(); 
+											temp << "L" << l_size;
+											l_size++; 
+
 											l_labels.push_back(temp.str() );
 											out << ":= " << temp.str() <<endl;
 										  } 
 										  optionalelse ENDIF { 
 				out <<": " << l_labels[l_labels.size() -2] <<endl;
 				out << ": " << l_labels[l_labels.size() -1] <<endl; 
+				l_labels.pop_back();
+				l_labels.pop_back();
 			}
-			| WHILE bool_exp BEGINLOOP ststatement ENDLOOP { }
-			| DO BEGINLOOP ststatement ENDLOOP WHILE bool_exp { }
+			| WHILE{
+				     stringstream temp;
+					 temp <<"L"<<l_size;
+					 l_size++;
+					 
+					 l_labels.push_back(temp.str() );	
+					 out<<": " << l_labels[l_labels.size()-1] <<endl;
+
+				   }bool_exp BEGINLOOP ststatement ENDLOOP { 
+				out <<":= " << l_labels[l_labels.size() -2] <<endl;
+				out << ": " << l_labels[l_labels.size() -1] <<endl; 
+
+				l_labels.pop_back();
+				l_labels.pop_back();
+			}
+			| DO BEGINLOOP{
+						   	 stringstream temp;
+							 temp <<"L"<<l_size;
+							 l_size++;
+
+							 //l_labels.push_back(temp.str() );	
+
+//							 doloop_l = temp.str();
+							 doloop_l.push_back(temp.str() );
+
+							// out<<": " << doloop_l <<endl;
+							 out<<": " << doloop_l[doloop_l.size()-1] <<endl;
+
+						  } ststatement ENDLOOP WHILE bool_exp { 
+				stringstream temp;
+				temp << "p" <<p_vars.size();
+				p_vars.push_back(temp.str() );
+				out <<"== " << temp.str() <<", " << doloop_c << ", 1" <<endl;
+				out <<"?:= " << doloop_l[doloop_l.size()-1] << ", "<<p_vars[p_vars.size()-1 ]<< endl;
+				out << ": " << l_labels[l_labels.size() -1] <<endl;
+
+				l_labels.pop_back();
+				doloop_l.pop_back();
+			}
 			| READ{readst = true; } Vars { readst = false;} 
 			| WRITE{writest = true; } Vars { readst = false;} 
-			| CONTINUE {    }
+			| CONTINUE {  //incorrect 
+			//does not jump out of the loop must go to label before end of loop 
+				out << ":= " << l_labels[l_labels.size()-1] <<endl;
+			}
 			;			
 Vars:
 			Vars COMMA Var {  
@@ -213,28 +262,28 @@ ststatement:
 optionalelse:
 			ELSE ststatement { 
 				out << ":= " << l_labels[l_labels.size() - 1] <<endl;
-				l_labels.pop_back();	
 			}
 			| { }
 			;
 bool_exp:
 			relation_and_exp relationexplist { 
 				if($2 == NULL){
-					  stringstream temp3;
-					  temp3 << "p" <<p_vars.size();
-					  p_vars.push_back(temp3.str() );
-					  out << "== " << temp3.str() << ", " << p_vars[p_vars.size() -2] << ", 0" << endl;
-
+					stringstream temp3;
+					temp3 << "p" <<p_vars.size();
+					p_vars.push_back(temp3.str() );
+					out << "== " << temp3.str() << ", " << p_vars[p_vars.size() -2] << ", 0" << endl;
 					stringstream temp;
-					temp << "L" << l_labels.size(); 
+					temp << "L" << l_size; 
+					l_size++;
+					
 					l_labels.push_back(temp.str() );
 					
 					out << "?:= " << temp.str() << ", " << temp3.str() << endl;
-
 					$$ = $1;
+			    
+				    doloop_c = temp3.str();	
 				}
 				else{//there are ORs
-					orp = true; 
 					stringstream temp;
 					temp << "p" << p_vars.size(); 
 					p_vars.push_back(temp.str() );
@@ -254,6 +303,22 @@ bool_exp:
 						t.pop_back();
 					}
 					strcpy($$, p_vars[p_vars.size()-1].c_str() );
+
+					if(orp)	{
+						stringstream temp3;
+						temp3 << "p" <<p_vars.size();
+						p_vars.push_back(temp3.str() );
+						out << "== " << temp3.str() << ", " << p_vars[p_vars.size() -2] << ", 0" << endl;
+						stringstream temp;
+						temp << "L" << l_size; 
+						l_size++;
+						l_labels.push_back(temp.str() );
+					
+						out << "?:= " << temp.str() << ", " << temp3.str() << endl;
+						orp = false;
+						
+			        	doloop_c = temp3.str();
+					}
 				}
 			}
 			;
@@ -292,23 +357,37 @@ relationexplist:
 				if($3 != NULL)
 					t.push_back($3);
 			}
-			| { $$ = NULL; 	}
+			| { 
+				$$ = NULL; 
+				orp=true;
+			}
 			;
 andlist:
 			AND relation_exp andlist {  
 				$$ = $2; 
 				if($3 != NULL){
-	cout<<"not null return: "<<$3<<endl;
-
 					t.push_back($3);
 				}
 			}
 			| { $$ = NULL; }
 			;
+
 relation_exp:
 		    NOT	expression comp expression { }
-			| NOT TRUE {}
-			| NOT FALSE { }
+			| NOT TRUE {
+				stringstream temp;
+				temp << "p" << p_vars.size(); 
+				p_vars.push_back(temp.str() );
+
+				out << "= " << temp.str() << ", 0 "<<endl;
+			}
+			| NOT FALSE { 
+				stringstream temp;
+				temp << "p" << p_vars.size(); 
+				p_vars.push_back(temp.str() );
+
+				out << "= " << temp.str() << ", 1 "<<endl;
+			}
 			| NOT L_PAREN bool_exp R_PAREN  { }
 			| expression comp expression { 
 				stringstream temp;
@@ -343,22 +422,25 @@ relation_exp:
 				  else{
 					out << $2 <<" "<< temp.str() <<", " << a << ", " << b <<endl;
 				  }
-				  //check for false
-	//??????????????????
-	/*
-				  stringstream temp3;
-				  temp3 << "p" <<p_vars.size();
-				  p_vars.push_back(temp.str() );
-				  out << "== " << temp3.str() << ", " << p_vars[p_vars.size() -2] << ", 0" << endl;
-				  strcpy($$, temp3.str().c_str());
-				  */
 
 				  strcpy($$, temp.str().c_str());
 
 
 			}
-			| TRUE {}
-			| FALSE { }
+			| TRUE {
+				stringstream temp;
+				temp << "p" << p_vars.size(); 
+				p_vars.push_back(temp.str() );
+
+				out << "= " << temp.str() << ", 1 "<<endl;
+			}
+			| FALSE {  
+				stringstream temp;
+				temp << "p" << p_vars.size(); 
+				p_vars.push_back(temp.str() );
+
+				out << "= " << temp.str() << ", 0 "<<endl;
+			}
 			| L_PAREN bool_exp R_PAREN  { }
 			;
 Var:
@@ -498,7 +580,7 @@ int main(int argc, char **argv){
    yyparse();
    
    if(!errors.str().empty()){ //if errors were encountered, output them and exit
-	   cout<<"Errors encountered: " << errors.str()<<endl;
+	   cout<<"Errors encountered:\n " << errors.str()<<endl;
 	   return 0;
    }
    
@@ -506,13 +588,24 @@ int main(int argc, char **argv){
 
    for(int i=0; i<sym_table.size(); i++){
 	   if(sym_table[i].type == 0)
-		   cout << ". _"<< sym_table[i].name<<endl;
+		   final << ". _"<< sym_table[i].name<<endl;
 		else if(sym_table[i].type == 1)
-			cout << ".[] _" << sym_table[i].name <<", " << sym_table[i].a_size<<endl;
+			final << ".[] _" << sym_table[i].name <<", " << sym_table[i].a_size<<endl;
+	}
+	for(int i=0; i<t_vars.size();i++){
+		final << ". " <<t_vars[i] <<endl;
+	}
+	for(int i=0; i<p_vars.size();i++){
+		final << ". " <<p_vars[i] <<endl;
 	}
    
-   cout<<endl;
-   cout<<out.str() <<endl;
+   final <<out.str() <<endl;
+
+   filename = filename + ".mil";
+   ofstream myfile;
+   myfile.open(filename.c_str());
+   myfile << final.str();
+   myfile.close();
    
    return 0;
 }
