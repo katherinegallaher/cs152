@@ -1,5 +1,4 @@
 /* Group Members: Katherine Gallaher (861100447), Julia Perez (861030684) */
-
 %{
  #include <stdio.h>
  #include <stdlib.h>
@@ -17,7 +16,7 @@
  extern int yylex(void);
  void yyerror(const char *msg);
  bool var_in_table(string val);
- bool arr_valid_size(int val);
+ bool arr_valid_size(string var, int val);
  bool ident_is_array(string val);
  int sym_type(string val);
  void do_readwrite(string curr);
@@ -36,6 +35,8 @@
  bool mult = false, divide = false, mod = false; 
  bool readst = false, writest = false; 
  bool andp = false, orp = false; 
+// bool elsep = false;
+ vector<bool> elsep;
  ostringstream final;
  ostringstream out;
  ostringstream errors;
@@ -45,9 +46,11 @@
  vector<string> p_vars;
  vector<string> l_labels; 
  vector<string> doloop_l;
+ vector<string> opelse;
  string doloop_c; 
-
  vector<string > t;
+ vector<string> v; 
+ vector<string> continue_label; 
 %}
 
 %union{
@@ -96,30 +99,33 @@ declarations:
 declaration:
 			IDENT more_idents COLON ARRAY L_PAREN NUMBER R_PAREN OF INTEGER {
 				bool valid = true, arrvalid=true;
-				arrvalid = arr_valid_size(atoi($6));
+				arrvalid = arr_valid_size($1,atoi($6));
 				valid = var_in_table($1);
-				if(arrvalid && !valid){
-					symtable_entry temp;
-					temp.type = 1; 
-					temp.a_size = atoi($6);
-					temp.name = $1; 
-					sym_table.push_back(temp);
-				}
-				else{
-					errors << "Variable " << $1 << " is already declared" <<endl;
+
+
+				symtable_entry temp;
+				temp.type = 1; 
+				temp.a_size = atoi($6);
+				temp.name = $1; 
+				sym_table.push_back(temp);
+
+				if(arrvalid && !valid){ }
+				else if (arrvalid){
+					errors << "Error line " << currLine << ": symbol \"" << $1 << "\" is multiply-defined" <<endl;
 				}
 			}
 			| IDENT more_idents COLON INTEGER { 
   				bool valid = true;
 				valid = var_in_table($1);
-				if(!valid){
-					symtable_entry temp;
-					temp.type = 0; 
-					temp.name = $1; 
-					sym_table.push_back(temp);
-				}
-				else{
-					errors << "Variable " << $1 << " is already declared" <<endl;
+
+				symtable_entry temp;
+				temp.type = 0; 
+				temp.name = $1; 
+				sym_table.push_back(temp);
+
+				if(!valid){ }
+				else {
+					errors << "Error line " << currLine << ": symbol \"" << $1 << "\" is multiply-defined" <<endl;
 				}
 			}
 
@@ -135,7 +141,7 @@ more_idents:
 					sym_table.push_back(temp);
 				}
 				else{
-					errors << "Variable " << $2 << " is already declared" <<endl;
+					errors << "Error line " << currLine << ": symbol \"" << $2 << "\" is multiply-defined" <<endl;
 				}
 			}
 			|  {  }
@@ -161,7 +167,23 @@ statement:
 					if(!check_if_temp(c) )
 						c.insert(0,"_");
 
-					out << "[]= " << a << ", "<< b<< ", "<< c << endl;
+					//check if c is an array 
+					int i2 = c.find(" ",0);
+					if(i2 != string::npos){
+						string x,y;
+						x = c.substr(0,i2);
+						y = c.substr(i2+1);
+						if(!check_if_temp(y) )
+						y.insert(0,"_");
+
+						stringstream temp;
+						temp << "t" <<t_vars.size();
+						t_vars.push_back(temp.str() );
+						out << "=[] " << temp.str() << ", " << x << ", " << y <<endl;
+						out << "[]= " << a << ", "<< b<< ", "<< temp.str() << endl;
+					}
+					else
+						out << "[]= " << a << ", "<< b<< ", "<< c << endl;
 				}
 				else{
 					string exp = $3;	
@@ -197,10 +219,16 @@ statement:
 											out << ":= " << temp.str() <<endl;
 										  } 
 										  optionalelse ENDIF { 
-				out <<": " << l_labels[l_labels.size() -2] <<endl;
+				if(elsep[elsep.size()-1] == false){
+					out <<": " << l_labels[l_labels.size() -2] <<endl;
+				}
 				out << ": " << l_labels[l_labels.size() -1] <<endl; 
+				
 				l_labels.pop_back();
 				l_labels.pop_back();
+
+				opelse.pop_back();
+				elsep.pop_back();
 			}
 			| WHILE{
 				     stringstream temp;
@@ -210,7 +238,12 @@ statement:
 					 l_labels.push_back(temp.str() );	
 					 out<<": " << l_labels[l_labels.size()-1] <<endl;
 
-				   }bool_exp BEGINLOOP ststatement ENDLOOP { 
+					 stringstream cont;
+					 cont <<"L"<<l_size;
+					 l_size++;
+					 continue_label.push_back(cont.str() );
+				   }bool_exp BEGINLOOP ststatement { out << ": " <<continue_label[continue_label.size()-1] <<endl; 
+						  				  continue_label.pop_back(); }ENDLOOP { 
 				out <<":= " << l_labels[l_labels.size() -2] <<endl;
 				out << ": " << l_labels[l_labels.size() -1] <<endl; 
 
@@ -222,19 +255,21 @@ statement:
 							 temp <<"L"<<l_size;
 							 l_size++;
 
-							 //l_labels.push_back(temp.str() );	
-
-//							 doloop_l = temp.str();
 							 doloop_l.push_back(temp.str() );
-
-							// out<<": " << doloop_l <<endl;
 							 out<<": " << doloop_l[doloop_l.size()-1] <<endl;
+							
+							 stringstream cont;
+							 cont <<"L"<<l_size;
+							 l_size++;
+							 continue_label.push_back(cont.str() );
 
-						  } ststatement ENDLOOP WHILE bool_exp { 
+						  } ststatement { out << ": " <<continue_label[continue_label.size()-1] <<endl; 
+						  				  continue_label.pop_back(); }
+						    ENDLOOP WHILE bool_exp { 
 				stringstream temp;
 				temp << "p" <<p_vars.size();
 				p_vars.push_back(temp.str() );
-				out <<"== " << temp.str() <<", " << doloop_c << ", 1" <<endl;
+				out <<"== " << temp.str() <<", " << doloop_c << ", 0" <<endl;
 				out <<"?:= " << doloop_l[doloop_l.size()-1] << ", "<<p_vars[p_vars.size()-1 ]<< endl;
 				out << ": " << l_labels[l_labels.size() -1] <<endl;
 
@@ -243,9 +278,8 @@ statement:
 			}
 			| READ{readst = true; } Vars { readst = false;} 
 			| WRITE{writest = true; } Vars { readst = false;} 
-			| CONTINUE {  //incorrect 
-			//does not jump out of the loop must go to label before end of loop 
-				out << ":= " << l_labels[l_labels.size()-1] <<endl;
+			| CONTINUE { 
+			  out << ":= " << continue_label[continue_label.size()-1] <<endl;
 			}
 			;			
 Vars:
@@ -260,10 +294,14 @@ ststatement:
 			| { }
 			;
 optionalelse:
-			ELSE ststatement { 
+			ELSE{ out << ": " << opelse[opelse.size()-1] <<endl; 
+				 // elsep = true; 
+				 elsep.push_back(true);
+				  } 
+			   ststatement { 
 				out << ":= " << l_labels[l_labels.size() - 1] <<endl;
 			}
-			| { }
+			| { elsep.push_back(false); }
 			;
 bool_exp:
 			relation_and_exp relationexplist { 
@@ -272,11 +310,13 @@ bool_exp:
 					temp3 << "p" <<p_vars.size();
 					p_vars.push_back(temp3.str() );
 					out << "== " << temp3.str() << ", " << p_vars[p_vars.size() -2] << ", 0" << endl;
+
 					stringstream temp;
 					temp << "L" << l_size; 
 					l_size++;
 					
 					l_labels.push_back(temp.str() );
+					opelse.push_back(temp.str() );
 					
 					out << "?:= " << temp.str() << ", " << temp3.str() << endl;
 					$$ = $1;
@@ -354,6 +394,7 @@ relation_and_exp:
 relationexplist: 
 			OR relation_and_exp relationexplist{ 
 				$$ = $2; 
+
 				if($3 != NULL)
 					t.push_back($3);
 			}
@@ -380,6 +421,7 @@ relation_exp:
 				p_vars.push_back(temp.str() );
 
 				out << "= " << temp.str() << ", 0 "<<endl;
+				strcpy($$,temp.str().c_str() );
 			}
 			| NOT FALSE { 
 				stringstream temp;
@@ -387,6 +429,7 @@ relation_exp:
 				p_vars.push_back(temp.str() );
 
 				out << "= " << temp.str() << ", 1 "<<endl;
+				strcpy($$,temp.str().c_str() );
 			}
 			| NOT L_PAREN bool_exp R_PAREN  { }
 			| expression comp expression { 
@@ -401,7 +444,6 @@ relation_exp:
 					b.insert(0,"_");
 
 				//if array another output is needed 				
-
 				int i = a.find(" ",0);
 				if(i != string::npos){//array on rhs 
 					stringstream temp2;
@@ -424,8 +466,6 @@ relation_exp:
 				  }
 
 				  strcpy($$, temp.str().c_str());
-
-
 			}
 			| TRUE {
 				stringstream temp;
@@ -433,6 +473,7 @@ relation_exp:
 				p_vars.push_back(temp.str() );
 
 				out << "= " << temp.str() << ", 1 "<<endl;
+				strcpy($$,temp.str().c_str() );
 			}
 			| FALSE {  
 				stringstream temp;
@@ -440,6 +481,7 @@ relation_exp:
 				p_vars.push_back(temp.str() );
 
 				out << "= " << temp.str() << ", 0 "<<endl;
+				strcpy($$,temp.str().c_str() );
 			}
 			| L_PAREN bool_exp R_PAREN  { }
 			;
@@ -450,10 +492,11 @@ Var:
 					$$ = $1;
 				}
 				else if(!valid){
-					errors << "Variable " << $1 << " does not exist" <<endl;
+					errors <<"Error line " << currLine << ": used variable \"" << $1 << "\" was not previously declared" <<endl;
 				}
 				else{ //is an array 
-					errors << "Variable " << $1 << " is being accessed as the wrong type" <<endl;
+					errors <<"Error line " << currLine << ": used array variable \"" << $1 << "\" is missing a specified index" <<endl;
+					
 				}
 			}
 			| IDENT L_PAREN expression R_PAREN { 
@@ -466,10 +509,10 @@ Var:
 				strcpy($$,a.c_str() );
 				}
 				else if(!valid){
-					errors << "Variable " << $1 << " does not exist" <<endl;
+					errors <<"Error line " << currLine << ": used variable \"" << $1 << "\" was not previously declared" <<endl;
 				}
 				else{ //is not an array 
-					errors << "Variable " << $1 << " is being accessed as the wrong type" <<endl;
+					errors <<"Error line " << currLine << ": used integer variable \"" << $1 << "\" is being used as an array" <<endl;
 				}
 			}
 			;
@@ -490,13 +533,35 @@ expression:
 					t_vars.push_back(temp.str() );
 					if(add){
 						out << "+ " << temp.str() << ", " << a << ", "<<b <<endl;
+						if(sub){
+							stringstream temp2;
+							temp2 << "t" << t_vars.size(); 
+							t_vars.push_back(temp2.str() );
+							if(!check_if_temp(v[v.size()-1]) )
+								v[v.size()-1].insert(0, "_");
+
+							out << "- " << temp2.str() << ", " << temp.str() << ", "<< v[v.size()-1] <<endl;
+							v.pop_back();
+						}
 					}
 					else if(sub){
 						out << "- " << temp.str() << ", " << a << ", "<<b <<endl;
+						
+						if(add){
+							stringstream temp2;
+							temp2 << "t" << t_vars.size(); 
+							t_vars.push_back(temp2.str() );
+							if(!check_if_temp(v[v.size()-1]) )
+								v[v.size()-1].insert(0, "_");
+
+							out << "+ " << temp2.str() << ", " << temp.str() << ", "<< v[v.size()-1] <<endl;
+							v.pop_back();
+						}
+
 					}
 					strcpy($$, t_vars[t_vars.size()-1].c_str() );
 				}
-				add = sub = false; 
+				add = sub =  false; 
 			}
 			;
 multiplicative_exp:
@@ -510,7 +575,7 @@ multiplicative_exp:
 						a.insert(0, "_");
 					if(!check_if_temp(b) )
 						b.insert(0,"_");
-
+					
 
 					stringstream temp;
 					temp << "t" << t_vars.size(); 
@@ -533,9 +598,23 @@ multiplicative_exp:
 term:
 			Var { $$ = $1; }
 			| NUMBER { $$ = $1; }
-			| L_PAREN expression R_PAREN { $$ = $2; }
-			| SUB Var { }
-			| SUB NUMBER { }
+			| L_PAREN expression R_PAREN {  $$ = $2; }
+			| SUB Var { 
+				string temp = $2;
+				temp.insert(0,"_");
+				out << "* " <<temp << ", " <<temp <<", -1" <<endl;
+				$$ = $2;
+			}
+			| SUB NUMBER { 
+				/*
+				stringstream temp;
+				temp << "t" << t_vars.size(); 
+				t_vars.push_back(temp.str() );
+				out<<"= "<<temp.str() << ", " << $2 <<endl;
+				out << "* " <<temp.str() << ", " <<temp.str() <<", -1" <<endl;
+				*/
+
+			}
 			| SUB L_PAREN expression R_PAREN { } 
 			;
 terms:
@@ -555,10 +634,14 @@ terms:
 			;
 exprlist:
 			ADD multiplicative_exp exprlist  {
+				if($3 != NULL)
+					v.push_back($3);
 				add = true;
 				$$ = $2;
 			}
 			| SUB multiplicative_exp exprlist { 
+				if($3 != NULL)
+					v.push_back($3);
 				sub = true; 
 				$$ = $2;
 			}
@@ -580,11 +663,9 @@ int main(int argc, char **argv){
    yyparse();
    
    if(!errors.str().empty()){ //if errors were encountered, output them and exit
-	   cout<<"Errors encountered:\n " << errors.str()<<endl;
+	   cout<<  errors.str()<<endl;
 	   return 0;
    }
-   
-   
 
    for(int i=0; i<sym_table.size(); i++){
 	   if(sym_table[i].type == 0)
@@ -624,11 +705,11 @@ bool var_in_table(string val){
 	}
 	return false; 
 }
-bool arr_valid_size(int val){
+bool arr_valid_size(string var, int val){
 	if(val > 0 ){
 		return true;
 	}
-	errors << "Variable " << val << " has an invalid array size" <<endl;
+	errors <<"Error line " << currLine << ": Variable \"" << var << "\" has an invalid array size" <<endl;
 	return false;
 }
  bool ident_is_array(string val){

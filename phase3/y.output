@@ -39,78 +39,84 @@ Grammar
 
    17 @4: /* empty */
 
-   18 statement: WHILE @4 bool_exp BEGINLOOP ststatement ENDLOOP
+   18 @5: /* empty */
 
-   19 @5: /* empty */
+   19 statement: WHILE @4 bool_exp BEGINLOOP ststatement @5 ENDLOOP
 
-   20 statement: DO BEGINLOOP @5 ststatement ENDLOOP WHILE bool_exp
+   20 @6: /* empty */
 
-   21 @6: /* empty */
+   21 @7: /* empty */
 
-   22 statement: READ @6 Vars
+   22 statement: DO BEGINLOOP @6 ststatement @7 ENDLOOP WHILE bool_exp
 
-   23 @7: /* empty */
+   23 @8: /* empty */
 
-   24 statement: WRITE @7 Vars
-   25          | CONTINUE
+   24 statement: READ @8 Vars
 
-   26 Vars: Vars COMMA Var
-   27     | Var
+   25 @9: /* empty */
 
-   28 ststatement: statement SEMICOLON ststatement
-   29            | /* empty */
+   26 statement: WRITE @9 Vars
+   27          | CONTINUE
 
-   30 optionalelse: ELSE ststatement
-   31             | /* empty */
+   28 Vars: Vars COMMA Var
+   29     | Var
 
-   32 bool_exp: relation_and_exp relationexplist
+   30 ststatement: statement SEMICOLON ststatement
+   31            | /* empty */
 
-   33 relation_and_exp: relation_exp andlist
+   32 @10: /* empty */
 
-   34 relationexplist: OR relation_and_exp relationexplist
-   35                | /* empty */
+   33 optionalelse: ELSE @10 ststatement
+   34             | /* empty */
 
-   36 andlist: AND relation_exp andlist
-   37        | /* empty */
+   35 bool_exp: relation_and_exp relationexplist
 
-   38 relation_exp: NOT expression comp expression
-   39             | NOT TRUE
-   40             | NOT FALSE
-   41             | NOT L_PAREN bool_exp R_PAREN
-   42             | expression comp expression
-   43             | TRUE
-   44             | FALSE
-   45             | L_PAREN bool_exp R_PAREN
+   36 relation_and_exp: relation_exp andlist
 
-   46 Var: IDENT
-   47    | IDENT L_PAREN expression R_PAREN
+   37 relationexplist: OR relation_and_exp relationexplist
+   38                | /* empty */
 
-   48 expression: multiplicative_exp exprlist
+   39 andlist: AND relation_exp andlist
+   40        | /* empty */
 
-   49 multiplicative_exp: term terms
+   41 relation_exp: NOT expression comp expression
+   42             | NOT TRUE
+   43             | NOT FALSE
+   44             | NOT L_PAREN bool_exp R_PAREN
+   45             | expression comp expression
+   46             | TRUE
+   47             | FALSE
+   48             | L_PAREN bool_exp R_PAREN
 
-   50 term: Var
-   51     | NUMBER
-   52     | L_PAREN expression R_PAREN
-   53     | SUB Var
-   54     | SUB NUMBER
-   55     | SUB L_PAREN expression R_PAREN
+   49 Var: IDENT
+   50    | IDENT L_PAREN expression R_PAREN
 
-   56 terms: /* empty */
-   57      | terms MULT term
-   58      | terms DIV term
-   59      | terms MOD term
+   51 expression: multiplicative_exp exprlist
 
-   60 exprlist: ADD multiplicative_exp exprlist
-   61         | SUB multiplicative_exp exprlist
-   62         | /* empty */
+   52 multiplicative_exp: term terms
 
-   63 comp: EQ
-   64     | NEQ
-   65     | LT
-   66     | GT
-   67     | LTE
-   68     | GTE
+   53 term: Var
+   54     | NUMBER
+   55     | L_PAREN expression R_PAREN
+   56     | SUB Var
+   57     | SUB NUMBER
+   58     | SUB L_PAREN expression R_PAREN
+
+   59 terms: /* empty */
+   60      | terms MULT term
+   61      | terms DIV term
+   62      | terms MOD term
+
+   63 exprlist: ADD multiplicative_exp exprlist
+   64         | SUB multiplicative_exp exprlist
+   65         | /* empty */
+
+   66 comp: EQ
+   67     | NEQ
+   68     | LT
+   69     | GT
+   70     | LTE
+   71     | GTE
 
 
 Terminals, with rules where they appear
@@ -126,39 +132,39 @@ OF (263) 8
 IF (264) 16
 THEN (265) 16
 ENDIF (266) 16
-ELSE (267) 30
+ELSE (267) 33
 ELSEIF (268)
-WHILE (269) 18 20
-DO (270) 20
-BEGINLOOP (271) 18 20
-ENDLOOP (272) 18 20
-CONTINUE (273) 25
-READ (274) 22
-WRITE (275) 24
-NOT (276) 38 39 40 41
-TRUE (277) 39 43
-FALSE (278) 40 44
-SEMICOLON (279) 3 6 12 13 28
+WHILE (269) 19 22
+DO (270) 22
+BEGINLOOP (271) 19 22
+ENDLOOP (272) 19 22
+CONTINUE (273) 27
+READ (274) 24
+WRITE (275) 26
+NOT (276) 41 42 43 44
+TRUE (277) 42 46
+FALSE (278) 43 47
+SEMICOLON (279) 3 6 12 13 30
 COLON (280) 8 9
-COMMA (281) 10 26
+COMMA (281) 10 28
 ASSIGN (282) 14
-L_PAREN (283) 8 41 45 47 52 55
-R_PAREN (284) 8 41 45 47 52 55
-IDENT (285) 3 8 9 10 46 47
-NUMBER (286) 8 51 54
-GTE (287) 68
-LTE (288) 67
-GT (289) 66
-LT (290) 65
-NEQ (291) 64
-EQ (292) 63
-MOD (293) 59
-DIV (294) 58
-MULT (295) 57
-ADD (296) 60
-SUB (297) 53 54 55 61
-AND (298) 36
-OR (299) 34
+L_PAREN (283) 8 44 48 50 55 58
+R_PAREN (284) 8 44 48 50 55 58
+IDENT (285) 3 8 9 10 49 50
+NUMBER (286) 8 54 57
+GTE (287) 71
+LTE (288) 70
+GT (289) 69
+LT (290) 68
+NEQ (291) 67
+EQ (292) 66
+MOD (293) 62
+DIV (294) 61
+MULT (295) 60
+ADD (296) 63
+SUB (297) 56 57 58 64
+AND (298) 39
+OR (299) 37
 ELSE_PREC (300)
 IF_PREC (301)
 
@@ -184,47 +190,53 @@ more_idents (54)
 statements (55)
     on left: 12 13, on right: 5 12
 statement (56)
-    on left: 14 16 18 20 22 24 25, on right: 12 13 28
+    on left: 14 16 19 22 24 26 27, on right: 12 13 30
 @3 (57)
     on left: 15, on right: 16
 @4 (58)
-    on left: 17, on right: 18
+    on left: 17, on right: 19
 @5 (59)
-    on left: 19, on right: 20
+    on left: 18, on right: 19
 @6 (60)
-    on left: 21, on right: 22
+    on left: 20, on right: 22
 @7 (61)
+    on left: 21, on right: 22
+@8 (62)
     on left: 23, on right: 24
-Vars (62)
-    on left: 26 27, on right: 22 24 26
-ststatement (63)
-    on left: 28 29, on right: 16 18 20 28 30
-optionalelse (64)
-    on left: 30 31, on right: 16
-bool_exp (65)
-    on left: 32, on right: 16 18 20 41 45
-relation_and_exp (66)
-    on left: 33, on right: 32 34
-relationexplist (67)
-    on left: 34 35, on right: 32 34
-andlist (68)
-    on left: 36 37, on right: 33 36
-relation_exp (69)
-    on left: 38 39 40 41 42 43 44 45, on right: 33 36
-Var (70)
-    on left: 46 47, on right: 14 26 27 50 53
-expression (71)
-    on left: 48, on right: 14 38 42 47 52 55
-multiplicative_exp (72)
-    on left: 49, on right: 48 60 61
-term (73)
-    on left: 50 51 52 53 54 55, on right: 49 57 58 59
-terms (74)
-    on left: 56 57 58 59, on right: 49 57 58 59
-exprlist (75)
-    on left: 60 61 62, on right: 48 60 61
-comp (76)
-    on left: 63 64 65 66 67 68, on right: 38 42
+@9 (63)
+    on left: 25, on right: 26
+Vars (64)
+    on left: 28 29, on right: 24 26 28
+ststatement (65)
+    on left: 30 31, on right: 16 19 22 30 33
+optionalelse (66)
+    on left: 33 34, on right: 16
+@10 (67)
+    on left: 32, on right: 33
+bool_exp (68)
+    on left: 35, on right: 16 19 22 44 48
+relation_and_exp (69)
+    on left: 36, on right: 35 37
+relationexplist (70)
+    on left: 37 38, on right: 35 37
+andlist (71)
+    on left: 39 40, on right: 36 39
+relation_exp (72)
+    on left: 41 42 43 44 45 46 47 48, on right: 36 39
+Var (73)
+    on left: 49 50, on right: 14 28 29 53 56
+expression (74)
+    on left: 51, on right: 14 41 45 50 55 58
+multiplicative_exp (75)
+    on left: 52, on right: 51 63 64
+term (76)
+    on left: 53 54 55 56 57 58, on right: 52 60 61 62
+terms (77)
+    on left: 59 60 61 62, on right: 52 60 61 62
+exprlist (78)
+    on left: 63 64 65, on right: 51 63 64
+comp (79)
+    on left: 66 67 68 69 70 71, on right: 41 45
 
 
 state 0
@@ -452,7 +464,7 @@ state 23
 
 state 24
 
-   18 statement: WHILE . @4 bool_exp BEGINLOOP ststatement ENDLOOP
+   19 statement: WHILE . @4 bool_exp BEGINLOOP ststatement @5 ENDLOOP
 
     $default  reduce using rule 17 (@4)
 
@@ -461,44 +473,44 @@ state 24
 
 state 25
 
-   20 statement: DO . BEGINLOOP @5 ststatement ENDLOOP WHILE bool_exp
+   22 statement: DO . BEGINLOOP @6 ststatement @7 ENDLOOP WHILE bool_exp
 
     BEGINLOOP  shift, and go to state 48
 
 
 state 26
 
-   25 statement: CONTINUE .
+   27 statement: CONTINUE .
 
-    $default  reduce using rule 25 (statement)
+    $default  reduce using rule 27 (statement)
 
 
 state 27
 
-   22 statement: READ . @6 Vars
+   24 statement: READ . @8 Vars
 
-    $default  reduce using rule 21 (@6)
+    $default  reduce using rule 23 (@8)
 
-    @6  go to state 49
+    @8  go to state 49
 
 
 state 28
 
-   24 statement: WRITE . @7 Vars
+   26 statement: WRITE . @9 Vars
 
-    $default  reduce using rule 23 (@7)
+    $default  reduce using rule 25 (@9)
 
-    @7  go to state 50
+    @9  go to state 50
 
 
 state 29
 
-   46 Var: IDENT .
-   47    | IDENT . L_PAREN expression R_PAREN
+   49 Var: IDENT .
+   50    | IDENT . L_PAREN expression R_PAREN
 
     L_PAREN  shift, and go to state 51
 
-    $default  reduce using rule 46 (Var)
+    $default  reduce using rule 49 (Var)
 
 
 state 30
@@ -543,10 +555,10 @@ state 33
 
 state 34
 
-   38 relation_exp: NOT . expression comp expression
-   39             | NOT . TRUE
-   40             | NOT . FALSE
-   41             | NOT . L_PAREN bool_exp R_PAREN
+   41 relation_exp: NOT . expression comp expression
+   42             | NOT . TRUE
+   43             | NOT . FALSE
+   44             | NOT . L_PAREN bool_exp R_PAREN
 
     TRUE     shift, and go to state 56
     FALSE    shift, and go to state 57
@@ -563,22 +575,22 @@ state 34
 
 state 35
 
-   43 relation_exp: TRUE .
+   46 relation_exp: TRUE .
 
-    $default  reduce using rule 43 (relation_exp)
+    $default  reduce using rule 46 (relation_exp)
 
 
 state 36
 
-   44 relation_exp: FALSE .
+   47 relation_exp: FALSE .
 
-    $default  reduce using rule 44 (relation_exp)
+    $default  reduce using rule 47 (relation_exp)
 
 
 state 37
 
-   45 relation_exp: L_PAREN . bool_exp R_PAREN
-   52 term: L_PAREN . expression R_PAREN
+   48 relation_exp: L_PAREN . bool_exp R_PAREN
+   55 term: L_PAREN . expression R_PAREN
 
     NOT      shift, and go to state 34
     TRUE     shift, and go to state 35
@@ -599,16 +611,16 @@ state 37
 
 state 38
 
-   51 term: NUMBER .
+   54 term: NUMBER .
 
-    $default  reduce using rule 51 (term)
+    $default  reduce using rule 54 (term)
 
 
 state 39
 
-   53 term: SUB . Var
-   54     | SUB . NUMBER
-   55     | SUB . L_PAREN expression R_PAREN
+   56 term: SUB . Var
+   57     | SUB . NUMBER
+   58     | SUB . L_PAREN expression R_PAREN
 
     L_PAREN  shift, and go to state 62
     IDENT    shift, and go to state 29
@@ -626,36 +638,36 @@ state 40
 
 state 41
 
-   32 bool_exp: relation_and_exp . relationexplist
+   35 bool_exp: relation_and_exp . relationexplist
 
     OR  shift, and go to state 66
 
-    $default  reduce using rule 35 (relationexplist)
+    $default  reduce using rule 38 (relationexplist)
 
     relationexplist  go to state 67
 
 
 state 42
 
-   33 relation_and_exp: relation_exp . andlist
+   36 relation_and_exp: relation_exp . andlist
 
     AND  shift, and go to state 68
 
-    $default  reduce using rule 37 (andlist)
+    $default  reduce using rule 40 (andlist)
 
     andlist  go to state 69
 
 
 state 43
 
-   50 term: Var .
+   53 term: Var .
 
-    $default  reduce using rule 50 (term)
+    $default  reduce using rule 53 (term)
 
 
 state 44
 
-   42 relation_exp: expression . comp expression
+   45 relation_exp: expression . comp expression
 
     GTE  shift, and go to state 70
     LTE  shift, and go to state 71
@@ -669,28 +681,28 @@ state 44
 
 state 45
 
-   48 expression: multiplicative_exp . exprlist
+   51 expression: multiplicative_exp . exprlist
 
     ADD  shift, and go to state 77
     SUB  shift, and go to state 78
 
-    $default  reduce using rule 62 (exprlist)
+    $default  reduce using rule 65 (exprlist)
 
     exprlist  go to state 79
 
 
 state 46
 
-   49 multiplicative_exp: term . terms
+   52 multiplicative_exp: term . terms
 
-    $default  reduce using rule 56 (terms)
+    $default  reduce using rule 59 (terms)
 
     terms  go to state 80
 
 
 state 47
 
-   18 statement: WHILE @4 . bool_exp BEGINLOOP ststatement ENDLOOP
+   19 statement: WHILE @4 . bool_exp BEGINLOOP ststatement @5 ENDLOOP
 
     NOT      shift, and go to state 34
     TRUE     shift, and go to state 35
@@ -711,16 +723,16 @@ state 47
 
 state 48
 
-   20 statement: DO BEGINLOOP . @5 ststatement ENDLOOP WHILE bool_exp
+   22 statement: DO BEGINLOOP . @6 ststatement @7 ENDLOOP WHILE bool_exp
 
-    $default  reduce using rule 19 (@5)
+    $default  reduce using rule 20 (@6)
 
-    @5  go to state 82
+    @6  go to state 82
 
 
 state 49
 
-   22 statement: READ @6 . Vars
+   24 statement: READ @8 . Vars
 
     IDENT  shift, and go to state 29
 
@@ -730,7 +742,7 @@ state 49
 
 state 50
 
-   24 statement: WRITE @7 . Vars
+   26 statement: WRITE @9 . Vars
 
     IDENT  shift, and go to state 29
 
@@ -740,7 +752,7 @@ state 50
 
 state 51
 
-   47 Var: IDENT L_PAREN . expression R_PAREN
+   50 Var: IDENT L_PAREN . expression R_PAREN
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -791,22 +803,22 @@ state 55
 
 state 56
 
-   39 relation_exp: NOT TRUE .
+   42 relation_exp: NOT TRUE .
 
-    $default  reduce using rule 39 (relation_exp)
+    $default  reduce using rule 42 (relation_exp)
 
 
 state 57
 
-   40 relation_exp: NOT FALSE .
+   43 relation_exp: NOT FALSE .
 
-    $default  reduce using rule 40 (relation_exp)
+    $default  reduce using rule 43 (relation_exp)
 
 
 state 58
 
-   41 relation_exp: NOT L_PAREN . bool_exp R_PAREN
-   52 term: L_PAREN . expression R_PAREN
+   44 relation_exp: NOT L_PAREN . bool_exp R_PAREN
+   55 term: L_PAREN . expression R_PAREN
 
     NOT      shift, and go to state 34
     TRUE     shift, and go to state 35
@@ -827,7 +839,7 @@ state 58
 
 state 59
 
-   38 relation_exp: NOT expression . comp expression
+   41 relation_exp: NOT expression . comp expression
 
     GTE  shift, and go to state 70
     LTE  shift, and go to state 71
@@ -841,15 +853,15 @@ state 59
 
 state 60
 
-   45 relation_exp: L_PAREN bool_exp . R_PAREN
+   48 relation_exp: L_PAREN bool_exp . R_PAREN
 
     R_PAREN  shift, and go to state 93
 
 
 state 61
 
-   42 relation_exp: expression . comp expression
-   52 term: L_PAREN expression . R_PAREN
+   45 relation_exp: expression . comp expression
+   55 term: L_PAREN expression . R_PAREN
 
     R_PAREN  shift, and go to state 94
     GTE      shift, and go to state 70
@@ -864,7 +876,7 @@ state 61
 
 state 62
 
-   55 term: SUB L_PAREN . expression R_PAREN
+   58 term: SUB L_PAREN . expression R_PAREN
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -879,16 +891,16 @@ state 62
 
 state 63
 
-   54 term: SUB NUMBER .
+   57 term: SUB NUMBER .
 
-    $default  reduce using rule 54 (term)
+    $default  reduce using rule 57 (term)
 
 
 state 64
 
-   53 term: SUB Var .
+   56 term: SUB Var .
 
-    $default  reduce using rule 53 (term)
+    $default  reduce using rule 56 (term)
 
 
 state 65
@@ -903,7 +915,7 @@ state 65
     WRITE     shift, and go to state 28
     IDENT     shift, and go to state 29
 
-    $default  reduce using rule 29 (ststatement)
+    $default  reduce using rule 31 (ststatement)
 
     statement    go to state 96
     ststatement  go to state 97
@@ -912,7 +924,7 @@ state 65
 
 state 66
 
-   34 relationexplist: OR . relation_and_exp relationexplist
+   37 relationexplist: OR . relation_and_exp relationexplist
 
     NOT      shift, and go to state 34
     TRUE     shift, and go to state 35
@@ -932,14 +944,14 @@ state 66
 
 state 67
 
-   32 bool_exp: relation_and_exp relationexplist .
+   35 bool_exp: relation_and_exp relationexplist .
 
-    $default  reduce using rule 32 (bool_exp)
+    $default  reduce using rule 35 (bool_exp)
 
 
 state 68
 
-   36 andlist: AND . relation_exp andlist
+   39 andlist: AND . relation_exp andlist
 
     NOT      shift, and go to state 34
     TRUE     shift, and go to state 35
@@ -958,56 +970,56 @@ state 68
 
 state 69
 
-   33 relation_and_exp: relation_exp andlist .
+   36 relation_and_exp: relation_exp andlist .
 
-    $default  reduce using rule 33 (relation_and_exp)
+    $default  reduce using rule 36 (relation_and_exp)
 
 
 state 70
 
-   68 comp: GTE .
+   71 comp: GTE .
 
-    $default  reduce using rule 68 (comp)
+    $default  reduce using rule 71 (comp)
 
 
 state 71
 
-   67 comp: LTE .
+   70 comp: LTE .
 
-    $default  reduce using rule 67 (comp)
+    $default  reduce using rule 70 (comp)
 
 
 state 72
 
-   66 comp: GT .
+   69 comp: GT .
 
-    $default  reduce using rule 66 (comp)
+    $default  reduce using rule 69 (comp)
 
 
 state 73
 
-   65 comp: LT .
+   68 comp: LT .
 
-    $default  reduce using rule 65 (comp)
+    $default  reduce using rule 68 (comp)
 
 
 state 74
 
-   64 comp: NEQ .
+   67 comp: NEQ .
 
-    $default  reduce using rule 64 (comp)
+    $default  reduce using rule 67 (comp)
 
 
 state 75
 
-   63 comp: EQ .
+   66 comp: EQ .
 
-    $default  reduce using rule 63 (comp)
+    $default  reduce using rule 66 (comp)
 
 
 state 76
 
-   42 relation_exp: expression comp . expression
+   45 relation_exp: expression comp . expression
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1022,7 +1034,7 @@ state 76
 
 state 77
 
-   60 exprlist: ADD . multiplicative_exp exprlist
+   63 exprlist: ADD . multiplicative_exp exprlist
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1036,7 +1048,7 @@ state 77
 
 state 78
 
-   61 exprlist: SUB . multiplicative_exp exprlist
+   64 exprlist: SUB . multiplicative_exp exprlist
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1050,35 +1062,35 @@ state 78
 
 state 79
 
-   48 expression: multiplicative_exp exprlist .
+   51 expression: multiplicative_exp exprlist .
 
-    $default  reduce using rule 48 (expression)
+    $default  reduce using rule 51 (expression)
 
 
 state 80
 
-   49 multiplicative_exp: term terms .
-   57 terms: terms . MULT term
-   58      | terms . DIV term
-   59      | terms . MOD term
+   52 multiplicative_exp: term terms .
+   60 terms: terms . MULT term
+   61      | terms . DIV term
+   62      | terms . MOD term
 
     MOD   shift, and go to state 103
     DIV   shift, and go to state 104
     MULT  shift, and go to state 105
 
-    $default  reduce using rule 49 (multiplicative_exp)
+    $default  reduce using rule 52 (multiplicative_exp)
 
 
 state 81
 
-   18 statement: WHILE @4 bool_exp . BEGINLOOP ststatement ENDLOOP
+   19 statement: WHILE @4 bool_exp . BEGINLOOP ststatement @5 ENDLOOP
 
     BEGINLOOP  shift, and go to state 106
 
 
 state 82
 
-   20 statement: DO BEGINLOOP @5 . ststatement ENDLOOP WHILE bool_exp
+   22 statement: DO BEGINLOOP @6 . ststatement @7 ENDLOOP WHILE bool_exp
 
     IF        shift, and go to state 23
     WHILE     shift, and go to state 24
@@ -1088,7 +1100,7 @@ state 82
     WRITE     shift, and go to state 28
     IDENT     shift, and go to state 29
 
-    $default  reduce using rule 29 (ststatement)
+    $default  reduce using rule 31 (ststatement)
 
     statement    go to state 96
     ststatement  go to state 107
@@ -1097,34 +1109,34 @@ state 82
 
 state 83
 
-   22 statement: READ @6 Vars .
-   26 Vars: Vars . COMMA Var
-
-    COMMA  shift, and go to state 108
-
-    $default  reduce using rule 22 (statement)
-
-
-state 84
-
-   27 Vars: Var .
-
-    $default  reduce using rule 27 (Vars)
-
-
-state 85
-
-   24 statement: WRITE @7 Vars .
-   26 Vars: Vars . COMMA Var
+   24 statement: READ @8 Vars .
+   28 Vars: Vars . COMMA Var
 
     COMMA  shift, and go to state 108
 
     $default  reduce using rule 24 (statement)
 
 
+state 84
+
+   29 Vars: Var .
+
+    $default  reduce using rule 29 (Vars)
+
+
+state 85
+
+   26 statement: WRITE @9 Vars .
+   28 Vars: Vars . COMMA Var
+
+    COMMA  shift, and go to state 108
+
+    $default  reduce using rule 26 (statement)
+
+
 state 86
 
-   52 term: L_PAREN . expression R_PAREN
+   55 term: L_PAREN . expression R_PAREN
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1139,7 +1151,7 @@ state 86
 
 state 87
 
-   47 Var: IDENT L_PAREN expression . R_PAREN
+   50 Var: IDENT L_PAREN expression . R_PAREN
 
     R_PAREN  shift, and go to state 110
 
@@ -1167,14 +1179,14 @@ state 90
 
 state 91
 
-   41 relation_exp: NOT L_PAREN bool_exp . R_PAREN
+   44 relation_exp: NOT L_PAREN bool_exp . R_PAREN
 
     R_PAREN  shift, and go to state 112
 
 
 state 92
 
-   38 relation_exp: NOT expression comp . expression
+   41 relation_exp: NOT expression comp . expression
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1189,28 +1201,28 @@ state 92
 
 state 93
 
-   45 relation_exp: L_PAREN bool_exp R_PAREN .
+   48 relation_exp: L_PAREN bool_exp R_PAREN .
 
-    $default  reduce using rule 45 (relation_exp)
+    $default  reduce using rule 48 (relation_exp)
 
 
 state 94
 
-   52 term: L_PAREN expression R_PAREN .
+   55 term: L_PAREN expression R_PAREN .
 
-    $default  reduce using rule 52 (term)
+    $default  reduce using rule 55 (term)
 
 
 state 95
 
-   55 term: SUB L_PAREN expression . R_PAREN
+   58 term: SUB L_PAREN expression . R_PAREN
 
     R_PAREN  shift, and go to state 114
 
 
 state 96
 
-   28 ststatement: statement . SEMICOLON ststatement
+   30 ststatement: statement . SEMICOLON ststatement
 
     SEMICOLON  shift, and go to state 115
 
@@ -1226,60 +1238,60 @@ state 97
 
 state 98
 
-   34 relationexplist: OR relation_and_exp . relationexplist
+   37 relationexplist: OR relation_and_exp . relationexplist
 
     OR  shift, and go to state 66
 
-    $default  reduce using rule 35 (relationexplist)
+    $default  reduce using rule 38 (relationexplist)
 
     relationexplist  go to state 117
 
 
 state 99
 
-   36 andlist: AND relation_exp . andlist
+   39 andlist: AND relation_exp . andlist
 
     AND  shift, and go to state 68
 
-    $default  reduce using rule 37 (andlist)
+    $default  reduce using rule 40 (andlist)
 
     andlist  go to state 118
 
 
 state 100
 
-   42 relation_exp: expression comp expression .
+   45 relation_exp: expression comp expression .
 
-    $default  reduce using rule 42 (relation_exp)
+    $default  reduce using rule 45 (relation_exp)
 
 
 state 101
 
-   60 exprlist: ADD multiplicative_exp . exprlist
+   63 exprlist: ADD multiplicative_exp . exprlist
 
     ADD  shift, and go to state 77
     SUB  shift, and go to state 78
 
-    $default  reduce using rule 62 (exprlist)
+    $default  reduce using rule 65 (exprlist)
 
     exprlist  go to state 119
 
 
 state 102
 
-   61 exprlist: SUB multiplicative_exp . exprlist
+   64 exprlist: SUB multiplicative_exp . exprlist
 
     ADD  shift, and go to state 77
     SUB  shift, and go to state 78
 
-    $default  reduce using rule 62 (exprlist)
+    $default  reduce using rule 65 (exprlist)
 
     exprlist  go to state 120
 
 
 state 103
 
-   59 terms: terms MOD . term
+   62 terms: terms MOD . term
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1292,7 +1304,7 @@ state 103
 
 state 104
 
-   58 terms: terms DIV . term
+   61 terms: terms DIV . term
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1305,7 +1317,7 @@ state 104
 
 state 105
 
-   57 terms: terms MULT . term
+   60 terms: terms MULT . term
 
     L_PAREN  shift, and go to state 86
     IDENT    shift, and go to state 29
@@ -1318,7 +1330,7 @@ state 105
 
 state 106
 
-   18 statement: WHILE @4 bool_exp BEGINLOOP . ststatement ENDLOOP
+   19 statement: WHILE @4 bool_exp BEGINLOOP . ststatement @5 ENDLOOP
 
     IF        shift, and go to state 23
     WHILE     shift, and go to state 24
@@ -1328,7 +1340,7 @@ state 106
     WRITE     shift, and go to state 28
     IDENT     shift, and go to state 29
 
-    $default  reduce using rule 29 (ststatement)
+    $default  reduce using rule 31 (ststatement)
 
     statement    go to state 96
     ststatement  go to state 124
@@ -1337,14 +1349,16 @@ state 106
 
 state 107
 
-   20 statement: DO BEGINLOOP @5 ststatement . ENDLOOP WHILE bool_exp
+   22 statement: DO BEGINLOOP @6 ststatement . @7 ENDLOOP WHILE bool_exp
 
-    ENDLOOP  shift, and go to state 125
+    $default  reduce using rule 21 (@7)
+
+    @7  go to state 125
 
 
 state 108
 
-   26 Vars: Vars COMMA . Var
+   28 Vars: Vars COMMA . Var
 
     IDENT  shift, and go to state 29
 
@@ -1353,16 +1367,16 @@ state 108
 
 state 109
 
-   52 term: L_PAREN expression . R_PAREN
+   55 term: L_PAREN expression . R_PAREN
 
     R_PAREN  shift, and go to state 94
 
 
 state 110
 
-   47 Var: IDENT L_PAREN expression R_PAREN .
+   50 Var: IDENT L_PAREN expression R_PAREN .
 
-    $default  reduce using rule 47 (Var)
+    $default  reduce using rule 50 (Var)
 
 
 state 111
@@ -1374,28 +1388,28 @@ state 111
 
 state 112
 
-   41 relation_exp: NOT L_PAREN bool_exp R_PAREN .
+   44 relation_exp: NOT L_PAREN bool_exp R_PAREN .
 
-    $default  reduce using rule 41 (relation_exp)
+    $default  reduce using rule 44 (relation_exp)
 
 
 state 113
 
-   38 relation_exp: NOT expression comp expression .
+   41 relation_exp: NOT expression comp expression .
 
-    $default  reduce using rule 38 (relation_exp)
+    $default  reduce using rule 41 (relation_exp)
 
 
 state 114
 
-   55 term: SUB L_PAREN expression R_PAREN .
+   58 term: SUB L_PAREN expression R_PAREN .
 
-    $default  reduce using rule 55 (term)
+    $default  reduce using rule 58 (term)
 
 
 state 115
 
-   28 ststatement: statement SEMICOLON . ststatement
+   30 ststatement: statement SEMICOLON . ststatement
 
     IF        shift, and go to state 23
     WHILE     shift, and go to state 24
@@ -1405,7 +1419,7 @@ state 115
     WRITE     shift, and go to state 28
     IDENT     shift, and go to state 29
 
-    $default  reduce using rule 29 (ststatement)
+    $default  reduce using rule 31 (ststatement)
 
     statement    go to state 96
     ststatement  go to state 128
@@ -1418,79 +1432,81 @@ state 116
 
     ELSE  shift, and go to state 129
 
-    $default  reduce using rule 31 (optionalelse)
+    $default  reduce using rule 34 (optionalelse)
 
     optionalelse  go to state 130
 
 
 state 117
 
-   34 relationexplist: OR relation_and_exp relationexplist .
+   37 relationexplist: OR relation_and_exp relationexplist .
 
-    $default  reduce using rule 34 (relationexplist)
+    $default  reduce using rule 37 (relationexplist)
 
 
 state 118
 
-   36 andlist: AND relation_exp andlist .
+   39 andlist: AND relation_exp andlist .
 
-    $default  reduce using rule 36 (andlist)
+    $default  reduce using rule 39 (andlist)
 
 
 state 119
 
-   60 exprlist: ADD multiplicative_exp exprlist .
+   63 exprlist: ADD multiplicative_exp exprlist .
 
-    $default  reduce using rule 60 (exprlist)
+    $default  reduce using rule 63 (exprlist)
 
 
 state 120
 
-   61 exprlist: SUB multiplicative_exp exprlist .
+   64 exprlist: SUB multiplicative_exp exprlist .
 
-    $default  reduce using rule 61 (exprlist)
+    $default  reduce using rule 64 (exprlist)
 
 
 state 121
 
-   59 terms: terms MOD term .
+   62 terms: terms MOD term .
 
-    $default  reduce using rule 59 (terms)
+    $default  reduce using rule 62 (terms)
 
 
 state 122
 
-   58 terms: terms DIV term .
+   61 terms: terms DIV term .
 
-    $default  reduce using rule 58 (terms)
+    $default  reduce using rule 61 (terms)
 
 
 state 123
 
-   57 terms: terms MULT term .
+   60 terms: terms MULT term .
 
-    $default  reduce using rule 57 (terms)
+    $default  reduce using rule 60 (terms)
 
 
 state 124
 
-   18 statement: WHILE @4 bool_exp BEGINLOOP ststatement . ENDLOOP
+   19 statement: WHILE @4 bool_exp BEGINLOOP ststatement . @5 ENDLOOP
 
-    ENDLOOP  shift, and go to state 131
+    $default  reduce using rule 18 (@5)
+
+    @5  go to state 131
 
 
 state 125
 
-   20 statement: DO BEGINLOOP @5 ststatement ENDLOOP . WHILE bool_exp
+   22 statement: DO BEGINLOOP @6 ststatement @7 . ENDLOOP WHILE bool_exp
 
-    WHILE  shift, and go to state 132
+    ENDLOOP  shift, and go to state 132
 
 
 state 126
 
-   26 Vars: Vars COMMA Var .
+   28 Vars: Vars COMMA Var .
 
-    $default  reduce using rule 26 (Vars)
+    $default  reduce using rule 28 (Vars)
 
 
 state 127
@@ -1502,28 +1518,18 @@ state 127
 
 state 128
 
-   28 ststatement: statement SEMICOLON ststatement .
+   30 ststatement: statement SEMICOLON ststatement .
 
-    $default  reduce using rule 28 (ststatement)
+    $default  reduce using rule 30 (ststatement)
 
 
 state 129
 
-   30 optionalelse: ELSE . ststatement
+   33 optionalelse: ELSE . @10 ststatement
 
-    IF        shift, and go to state 23
-    WHILE     shift, and go to state 24
-    DO        shift, and go to state 25
-    CONTINUE  shift, and go to state 26
-    READ      shift, and go to state 27
-    WRITE     shift, and go to state 28
-    IDENT     shift, and go to state 29
+    $default  reduce using rule 32 (@10)
 
-    $default  reduce using rule 29 (ststatement)
-
-    statement    go to state 96
-    ststatement  go to state 133
-    Var          go to state 32
+    @10  go to state 133
 
 
 state 130
@@ -1535,37 +1541,35 @@ state 130
 
 state 131
 
-   18 statement: WHILE @4 bool_exp BEGINLOOP ststatement ENDLOOP .
+   19 statement: WHILE @4 bool_exp BEGINLOOP ststatement @5 . ENDLOOP
 
-    $default  reduce using rule 18 (statement)
+    ENDLOOP  shift, and go to state 135
 
 
 state 132
 
-   20 statement: DO BEGINLOOP @5 ststatement ENDLOOP WHILE . bool_exp
+   22 statement: DO BEGINLOOP @6 ststatement @7 ENDLOOP . WHILE bool_exp
 
-    NOT      shift, and go to state 34
-    TRUE     shift, and go to state 35
-    FALSE    shift, and go to state 36
-    L_PAREN  shift, and go to state 37
-    IDENT    shift, and go to state 29
-    NUMBER   shift, and go to state 38
-    SUB      shift, and go to state 39
-
-    bool_exp            go to state 135
-    relation_and_exp    go to state 41
-    relation_exp        go to state 42
-    Var                 go to state 43
-    expression          go to state 44
-    multiplicative_exp  go to state 45
-    term                go to state 46
+    WHILE  shift, and go to state 136
 
 
 state 133
 
-   30 optionalelse: ELSE ststatement .
+   33 optionalelse: ELSE @10 . ststatement
 
-    $default  reduce using rule 30 (optionalelse)
+    IF        shift, and go to state 23
+    WHILE     shift, and go to state 24
+    DO        shift, and go to state 25
+    CONTINUE  shift, and go to state 26
+    READ      shift, and go to state 27
+    WRITE     shift, and go to state 28
+    IDENT     shift, and go to state 29
+
+    $default  reduce using rule 31 (ststatement)
+
+    statement    go to state 96
+    ststatement  go to state 137
+    Var          go to state 32
 
 
 state 134
@@ -1577,6 +1581,41 @@ state 134
 
 state 135
 
-   20 statement: DO BEGINLOOP @5 ststatement ENDLOOP WHILE bool_exp .
+   19 statement: WHILE @4 bool_exp BEGINLOOP ststatement @5 ENDLOOP .
 
-    $default  reduce using rule 20 (statement)
+    $default  reduce using rule 19 (statement)
+
+
+state 136
+
+   22 statement: DO BEGINLOOP @6 ststatement @7 ENDLOOP WHILE . bool_exp
+
+    NOT      shift, and go to state 34
+    TRUE     shift, and go to state 35
+    FALSE    shift, and go to state 36
+    L_PAREN  shift, and go to state 37
+    IDENT    shift, and go to state 29
+    NUMBER   shift, and go to state 38
+    SUB      shift, and go to state 39
+
+    bool_exp            go to state 138
+    relation_and_exp    go to state 41
+    relation_exp        go to state 42
+    Var                 go to state 43
+    expression          go to state 44
+    multiplicative_exp  go to state 45
+    term                go to state 46
+
+
+state 137
+
+   33 optionalelse: ELSE @10 ststatement .
+
+    $default  reduce using rule 33 (optionalelse)
+
+
+state 138
+
+   22 statement: DO BEGINLOOP @6 ststatement @7 ENDLOOP WHILE bool_exp .
+
+    $default  reduce using rule 22 (statement)

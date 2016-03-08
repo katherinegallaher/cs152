@@ -136,7 +136,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 53 "MINI_L.y"
+#line 56 "MINI_L.y"
 {
   char* identToken;
   int numberToken;
